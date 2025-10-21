@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/design_bottom_sheet_slide_out.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/design_bottom_sheet_slide_out.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/m3_side_sheet_slide_in.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/m3_side_sheet_slide_in.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/design_bottom_sheet_slide_in.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/design_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/mtrl_bottom_sheet_slide_out.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/mtrl_bottom_sheet_slide_out.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/m3_bottom_sheet_slide_in.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/m3_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/m3_bottom_sheet_slide_out.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/m3_bottom_sheet_slide_out.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/mtrl_bottom_sheet_slide_in.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/mtrl_bottom_sheet_slide_in.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/fragment_fast_out_extra_slow_in.xml",
+        "source": "co.qredet.sdk-fragment-1.3.6-3:/anim-v21/fragment_fast_out_extra_slow_in.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/anim-v21/m3_side_sheet_slide_out.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/anim-v21/m3_side_sheet_slide_out.xml"
+    }
+]

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="co.qredet.demo.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.purple_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="3"
+            column="12"
+            startOffset="62"
+            endLine="3"
+            endColumn="29"
+            endOffset="79"/>
+        <entry
+            name="model"
+            string="attr[colorPrimaryVariant(R)],color[purple_200(D),purple_500(U),purple_700(U),teal_200(U),teal_700(U),black(U),white(U)],drawable[ic_launcher_background(U),ic_launcher_foreground(U)],mipmap[ic_launcher(U),ic_launcher_round(U)],string[app_name(U)],style[Theme_Qredet(U),Theme_Material3_DayNight(R)],xml[data_extraction_rules(U),backup_rules(U)];a^8^9,b^8^9,d^e^2^3^7^4^5^6^0;;;"/>
+    </map>
+
+</incidents>

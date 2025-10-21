@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "co.qredet.sdk-release-27:/layout-land/material_timepicker.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/layout-land/material_timepicker.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/layout-land/mtrl_picker_header_dialog.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/layout-land/mtrl_picker_header_dialog.xml"
+    },
+    {
+        "merged": "co.qredet.sdk-release-27:/layout-land/material_clock_period_toggle_land.xml",
+        "source": "co.qredet.sdk-material-1.9.0-22:/layout-land/material_clock_period_toggle_land.xml"
+    }
+]

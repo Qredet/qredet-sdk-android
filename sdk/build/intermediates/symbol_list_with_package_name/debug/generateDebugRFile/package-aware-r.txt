@@ -1,0 +1,8 @@
+co.qredet.sdk
+string aiddescription
+string apdu_description
+string service_description
+string servicedesc
+xml apduservice
+xml nfc_tech_filter
+xml techlist

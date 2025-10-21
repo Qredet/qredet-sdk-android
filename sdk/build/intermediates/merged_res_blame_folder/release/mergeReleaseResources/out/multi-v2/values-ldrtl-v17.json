@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "co.qredet.sdk-release-27:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "map": [
+                {
+                    "source": "/Users/user/.gradle/caches/9.0.0/transforms/f07fbc44721e6a4c0852c46443e94a7d/transformed/material-1.9.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,191",
+                        "endColumns": "135,140",
+                        "endOffsets": "186,327"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "co.qredet.sdk-mergeReleaseResources-25:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "map": [
+                {
+                    "source": "/Users/user/.gradle/caches/9.0.0/transforms/f07fbc44721e6a4c0852c46443e94a7d/transformed/material-1.9.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,191",
+                        "endColumns": "135,140",
+                        "endOffsets": "186,327"
+                    }
+                }
+            ]
+        }
+    ]
+}
