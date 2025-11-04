@@ -1,6 +1,6 @@
 # Qredet SDK Android
 
-[![](https://jitpack.io/v/yourusername/qredet-sdk-android.svg)](https://jitpack.io/#yourusername/qredet-sdk-android)
+[![](https://jitpack.io/v/Qredet/qredet-sdk-android.svg)](https://jitpack.io/#Qredet/qredet-sdk-android)
 
 Qredet is a contactless payment SDK for Android that enables devices to:
 - Act as payment terminals (Phone-to-Phone payments)
@@ -31,7 +31,7 @@ Add the dependency to your app's `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'com.github.yourusername:qredet-sdk-android:1.0.0'
+    implementation 'com.github.Qredet:qredet-sdk-android:v0.0.1'
 }
 ```
 
