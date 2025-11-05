@@ -43,6 +43,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        qredet.completeTransaction(this)
         
         // Example usage - uncomment the line you want to test:
         
