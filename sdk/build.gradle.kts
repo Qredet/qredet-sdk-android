@@ -62,7 +62,7 @@ configure<PublishingExtension> {
         create<MavenPublication>("Maven") {
             artifactId = "qredet-sdk-android"
             groupId = "com.github.Qredet"
-            version = "1.0.1"
+            version = "1.0.2"
             afterEvaluate {
                 artifact(tasks.getByName(
                     "bundleReleaseAar"
