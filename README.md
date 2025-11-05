@@ -31,7 +31,7 @@ Add the dependency to your app's `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Qredet:qredet-sdk-android:1.0.3'
+    implementation 'com.github.Qredet:qredet-sdk-android:1.0.4'
 }
 ```
 

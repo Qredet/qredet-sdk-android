@@ -417,9 +417,18 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
                 for (record in mNdefMessage.records) {
                     val payload = record.payload
                     val data = String(payload, Charsets.UTF_8)
-                    val startIndex = data.indexOf("{", data.indexOf("stxen"))
-                    val result = data.substring(startIndex)
-                    finalResult = result
+                    val stxenIndex = data.indexOf("stxen")
+                    if (stxenIndex != -1) {
+                        val startIndex = data.indexOf("{", stxenIndex)
+                        if (startIndex != -1) {
+                            val result = data.substring(startIndex)
+                            finalResult = result
+                        } else {
+                            Log.w(TAG, "Could not find '{' after 'stxen' in NFC data")
+                        }
+                    } else {
+                        Log.w(TAG, "Could not find 'stxen' in NFC data")
+                    }
 
                 }
 
