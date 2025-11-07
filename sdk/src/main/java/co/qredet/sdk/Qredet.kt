@@ -60,9 +60,9 @@ class Qredet(apiKey: String, onTransactionInitiated: (data: Map<String, *>) -> U
         EventBus.register(this)
     }
 
-    fun startTransaction(context: Context, id: String, amount: Double, reference: String, extra: Map<String, *>?) {
+    fun startTransaction(context: Context, id: String, amount: Double, extra: Map<String, *>?) {
         val intent = Intent(context, QHostApduService::class.java)
-        val data = mapOf("id" to id, "amount" to amount, "reference" to reference).plus(extra as Map<String, *>)
+        val data = mapOf("id" to id, "amount" to amount).plus(extra as Map<String, *>)
         if (extra.isNotEmpty()) {
             data + extra
         }

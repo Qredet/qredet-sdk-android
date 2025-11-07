@@ -474,36 +474,25 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
         val mNdef = Ndef.get(tag)
 
-        var finalResult: String? = null
+        var finalResult = ""
 
         if (mNdef != null) {
             val mNdefMessage = mNdef.cachedNdefMessage
 
             if (mNdefMessage != null) {
                 for (record in mNdefMessage.records) {
-                    val rawPayload = parseNdefRecord(record)
-                    if (rawPayload.isNullOrEmpty()) {
-                        Log.w(TAG, "Skipping empty NFC payload for record type ${Arrays.toString(record.type)}")
-                        continue
-                    }
+                    val payload = record.payload
+                    val data = String(payload, Charsets.UTF_8)
+                    val startIndex = data.indexOf("{", data.indexOf("stxen"))
+                    val result = data.substring(startIndex)
+                    finalResult = result
 
-                    val normalizedPayload = normalizePayload(rawPayload)
-                    if (normalizedPayload != null) {
-                        finalResult = normalizedPayload
-                        break
-                    }
-                    Log.w(TAG, "Unable to normalize NFC payload: $rawPayload")
-                }
-
-                if (finalResult == null) {
-                    Log.w(TAG, "Completed NFC read without finding usable payload content.")
-                    finalResult = ""
                 }
 
                 doVibrate()
 
                 runOnUiThread {
-                    val result = Events.NfcReadResult(finalResult ?: "")
+                    val result = Events.NfcReadResult(finalResult)
                     EventBus.post(result)
                 }
 
