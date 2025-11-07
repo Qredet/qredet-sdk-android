@@ -229,6 +229,10 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
         }
 
         var startIndex = markerIndex + marker.length
+        if (startIndex < 0) {
+            Log.w(TAG, "Marker index calculation underflowed for data: $data")
+            return data.trim()
+        }
 
         while (startIndex < data.length &&
             (data[startIndex].isWhitespace() || data[startIndex] == ':' || data[startIndex] == '=')
@@ -240,7 +244,42 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
             return ""
         }
 
-        return data.substring(startIndex).trim()
+        return try {
+            data.substring(startIndex).trim()
+        } catch (e: StringIndexOutOfBoundsException) {
+            Log.e(TAG, "Failed to substring NFC payload starting at $startIndex for data: $data", e)
+            data.trim()
+        }
+    }
+
+    private fun parseNdefRecord(record: NdefRecord): String? {
+        return try {
+            when (record.tnf) {
+                NdefRecord.TNF_WELL_KNOWN -> {
+                    when {
+                        Arrays.equals(record.type, NdefRecord.RTD_TEXT) -> {
+                            val textPayload = parseTextrecordPayload(record.payload)
+                            String(textPayload, Charsets.UTF_8)
+                        }
+
+                        Arrays.equals(record.type, NdefRecord.RTD_URI) -> {
+                            record.toUri()?.toString()
+                        }
+
+                        else -> String(record.payload, Charsets.UTF_8)
+                    }
+                }
+
+                NdefRecord.TNF_ABSOLUTE_URI -> record.toUri()?.toString()
+
+                NdefRecord.TNF_MIME_MEDIA -> String(record.payload, Charsets.UTF_8)
+
+                else -> String(record.payload, Charsets.UTF_8)
+            }
+        } catch (t: Throwable) {
+            Log.e(TAG, "Failed to parse NDEF record", t)
+            null
+        }
     }
 
     private fun doVibrate() {
@@ -440,14 +479,18 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
             if (mNdefMessage != null) {
                 for (record in mNdefMessage.records) {
-                    val payload = record.payload
-                    val data = String(payload, Charsets.UTF_8)
-                    val normalizedPayload = normalizePayload(data)
+                    val rawPayload = parseNdefRecord(record)
+                    if (rawPayload.isNullOrEmpty()) {
+                        Log.w(TAG, "Skipping empty NFC payload for record type ${Arrays.toString(record.type)}")
+                        continue
+                    }
+
+                    val normalizedPayload = normalizePayload(rawPayload)
                     if (normalizedPayload != null) {
                         finalResult = normalizedPayload
                         break
                     }
-                    Log.w(TAG, "Unable to normalize NFC payload: $data")
+                    Log.w(TAG, "Unable to normalize NFC payload: $rawPayload")
                 }
 
                 if (finalResult == null) {
