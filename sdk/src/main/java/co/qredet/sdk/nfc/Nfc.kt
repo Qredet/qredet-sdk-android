@@ -228,32 +228,34 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
             return data.trim()
         }
 
-        var startIndex = markerIndex + marker.length
-        if (startIndex < 0) {
+        val requestedStart = markerIndex + marker.length
+        if (requestedStart < 0) {
             Log.w(TAG, "Marker index calculation underflowed for data: $data")
             return data.trim()
         }
 
-        while (startIndex < data.length &&
-            (data[startIndex].isWhitespace() || data[startIndex] == ':' || data[startIndex] == '=')
-        ) {
-            startIndex++
-        }
+        val safeStart = requestedStart.coerceIn(0, data.length)
 
-        if (startIndex >= data.length) {
+        if (safeStart >= data.length) {
             return ""
         }
 
-        return try {
-            data.substring(startIndex).trim()
+        val remainder = try {
+            data.substring(safeStart)
         } catch (e: StringIndexOutOfBoundsException) {
-            Log.e(TAG, "Failed to substring NFC payload starting at $startIndex for data: $data", e)
-            data.trim()
+            Log.e(TAG, "Failed to substring NFC payload starting at $safeStart for data: $data", e)
+            return data.trim()
         }
+
+        val cleaned = remainder.dropWhile { it.isWhitespace() || it == ':' || it == '=' }
+        return cleaned.trim()
     }
 
     private fun parseNdefRecord(record: NdefRecord): String? {
         return try {
+            if (record.payload == null || record.payload.isEmpty()) {
+                return ""
+            }
             when (record.tnf) {
                 NdefRecord.TNF_WELL_KNOWN -> {
                     when {
