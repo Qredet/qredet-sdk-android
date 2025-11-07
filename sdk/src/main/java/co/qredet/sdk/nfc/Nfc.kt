@@ -218,6 +218,31 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
         return message
     }
 
+    private fun normalizePayload(data: String, marker: String = "stxen"): String? {
+        if (data.isEmpty()) {
+            return ""
+        }
+
+        val markerIndex = data.indexOf(marker)
+        if (markerIndex == -1) {
+            return data.trim()
+        }
+
+        var startIndex = markerIndex + marker.length
+
+        while (startIndex < data.length &&
+            (data[startIndex].isWhitespace() || data[startIndex] == ':' || data[startIndex] == '=')
+        ) {
+            startIndex++
+        }
+
+        if (startIndex >= data.length) {
+            return ""
+        }
+
+        return data.substring(startIndex).trim()
+    }
+
     private fun doVibrate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             (this.getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(
@@ -408,7 +433,7 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
         val mNdef = Ndef.get(tag)
 
-        var finalResult = ""
+        var finalResult: String? = null
 
         if (mNdef != null) {
             val mNdefMessage = mNdef.cachedNdefMessage
@@ -417,25 +442,23 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
                 for (record in mNdefMessage.records) {
                     val payload = record.payload
                     val data = String(payload, Charsets.UTF_8)
-                    val stxenIndex = data.indexOf("stxen")
-                    if (stxenIndex != -1) {
-                        val startIndex = data.indexOf("{", stxenIndex)
-                        if (startIndex != -1) {
-                            val result = data.substring(startIndex)
-                            finalResult = result
-                        } else {
-                            Log.w(TAG, "Could not find '{' after 'stxen' in NFC data")
-                        }
-                    } else {
-                        Log.w(TAG, "Could not find 'stxen' in NFC data")
+                    val normalizedPayload = normalizePayload(data)
+                    if (normalizedPayload != null) {
+                        finalResult = normalizedPayload
+                        break
                     }
+                    Log.w(TAG, "Unable to normalize NFC payload: $data")
+                }
 
+                if (finalResult == null) {
+                    Log.w(TAG, "Completed NFC read without finding usable payload content.")
+                    finalResult = ""
                 }
 
                 doVibrate()
 
                 runOnUiThread {
-                    val result = Events.NfcReadResult(finalResult)
+                    val result = Events.NfcReadResult(finalResult ?: "")
                     EventBus.post(result)
                 }
 
