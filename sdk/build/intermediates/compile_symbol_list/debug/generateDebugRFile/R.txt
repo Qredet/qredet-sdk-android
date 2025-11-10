@@ -1,7 +1,0 @@
-int string aiddescription 0x0
-int string apdu_description 0x0
-int string service_description 0x0
-int string servicedesc 0x0
-int xml apduservice 0x0
-int xml nfc_tech_filter 0x0
-int xml techlist 0x0
