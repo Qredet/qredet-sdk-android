@@ -112,21 +112,12 @@ open class QHostApduService : HostApduService() {
 
         if (intent.hasExtra("ndefMessage")) {
             Log.d("HCE ACTIVITY", "ndef dey")
-            NDEF_URI =
-                NdefMessage(createTextRecord("en", intent.getStringExtra("ndefMessage").toString(), NDEF_ID))
-
-            NDEF_URI_BYTES = NDEF_URI.toByteArray()
-            NDEF_URI_LEN = fillByteArrayToFixedDimension(
-                BigInteger.valueOf(NDEF_URI_BYTES.size.toLong()).toByteArray(), 2
-            )
+            val payload = intent.getStringExtra("ndefMessage").orEmpty()
+            updateNdefPayload(payload)
         } else if (intent.hasExtra("ndefURI")) {
             Log.d("HCE ACTIVITY", "ndef uri dey")
-            NDEF_URI =
-                NdefMessage(NdefRecord.createUri(intent.getStringExtra("ndefURI").toString()))
-            NDEF_URI_BYTES = NDEF_URI.toByteArray()
-            NDEF_URI_LEN = fillByteArrayToFixedDimension(
-                BigInteger.valueOf(NDEF_URI_BYTES.size.toLong()).toByteArray(), 2
-            )
+            val payload = intent.getStringExtra("ndefURI").orEmpty()
+            updateNdefPayload(payload, forceUri = true)
         }
 
         Log.i(TAG, "onStartCommand() | NDEF" + NDEF_URI.toString())
@@ -292,6 +283,19 @@ open class QHostApduService : HostApduService() {
         )
 
         return NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, id, recordPayload)
+    }
+
+    private fun updateNdefPayload(rawPayload: String, forceUri: Boolean = false) {
+        val trimmed = rawPayload.trim()
+        NDEF_URI = if (trimmed.isNotEmpty() && (forceUri || trimmed.startsWith("http://", true) || trimmed.startsWith("https://", true))) {
+            NdefMessage(NdefRecord.createUri(trimmed))
+        } else {
+            NdefMessage(createTextRecord("en", trimmed.ifEmpty { "no nfc data" }, NDEF_ID))
+        }
+        NDEF_URI_BYTES = NDEF_URI.toByteArray()
+        NDEF_URI_LEN = fillByteArrayToFixedDimension(
+            BigInteger.valueOf(NDEF_URI_BYTES.size.toLong()).toByteArray(), 2
+        )
     }
 
     fun fillByteArrayToFixedDimension(array: ByteArray, fixedSize: Int): ByteArray {

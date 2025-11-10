@@ -284,6 +284,32 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
         }
     }
 
+    private fun extractMeaningfulPayload(raw: String): String {
+        val normalized = normalizePayload(raw)
+        if (!normalized.isNullOrEmpty()) {
+            return normalized
+        }
+
+        val trimmed = raw.trim()
+        if (trimmed.isEmpty()) {
+            return ""
+        }
+
+        if (trimmed.startsWith("http://", ignoreCase = true) || trimmed.startsWith("https://", ignoreCase = true)) {
+            return trimmed
+        }
+
+        if (trimmed.contains("{") && trimmed.contains("}")) {
+            val start = trimmed.indexOf('{')
+            val end = trimmed.lastIndexOf('}')
+            if (start in 0 until end) {
+                return trimmed.substring(start, end + 1).trim()
+            }
+        }
+
+        return trimmed
+    }
+
     private fun doVibrate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             (this.getSystemService(VIBRATOR_SERVICE) as Vibrator).vibrate(
@@ -435,35 +461,33 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
                 if (ndefRecordsCount > 0) {
                     var isoDepResult = ""
                     for (i in 0 until ndefRecordsCount) {
-                        val ndefTnf = ndefRecords[i].tnf
-                        val ndefType = ndefRecords[i].type
-                        val ndefPayload = ndefRecords[i].payload
-                        // here we are trying to parse the content
-                        // Well known type - Text
-                        if (ndefTnf == NdefRecord.TNF_WELL_KNOWN &&
-                            Arrays.equals(ndefType, NdefRecord.RTD_TEXT)
-                        ) {
-
-                            val ndefRec = parseTextrecordPayload(ndefPayload)
-                            isoDepResult = String(ndefRec, Charsets.UTF_8)
-
-                            println("NDEF PAYLOAD ${String(ndefRec, Charsets.UTF_8)}")
+                        val parsedRecord = parseNdefRecord(ndefRecords[i])?.trim().orEmpty()
+                        if (parsedRecord.isNotEmpty()) {
+                            val extracted = extractMeaningfulPayload(parsedRecord)
+                            if (extracted.isNotEmpty()) {
+                                isoDepResult = extracted
+                                println("NDEF PAYLOAD $isoDepResult")
+                                break
+                            }
                         }
                     }
-                    doVibrate()
-                    runOnUiThread {
-                        val result = Events.NfcReadResult(isoDepResult)
-                        EventBus.post(result)
-                    }
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        delay(TimeUnit.SECONDS.toMillis(3))
-                        withContext(Dispatchers.Main) {
-                            Log.i("TAG", "this will be called after 3 seconds")
-                            finish()
+                    if (isoDepResult.isNotEmpty()) {
+                        doVibrate()
+                        runOnUiThread {
+                            val result = Events.NfcReadResult(isoDepResult)
+                            EventBus.post(result)
                         }
-                    }
 
+                        CoroutineScope(Dispatchers.IO).launch {
+                            delay(TimeUnit.SECONDS.toMillis(3))
+                            withContext(Dispatchers.Main) {
+                                Log.i("TAG", "this will be called after 3 seconds")
+                                finish()
+                            }
+                        }
+
+                        return
+                    }
                 }
             } catch (e: FormatException) {
                 e.printStackTrace();
@@ -481,12 +505,14 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
             if (mNdefMessage != null) {
                 for (record in mNdefMessage.records) {
-                    val payload = record.payload
+                    val payload = record.payload ?: continue
                     val data = String(payload, Charsets.UTF_8)
-                    val startIndex = data.indexOf("{", data.indexOf("stxen"))
-                    val result = data.substring(startIndex)
-                    finalResult = result
+                    finalResult = extractMeaningfulPayload(data)
 
+                }
+
+                if (finalResult.isEmpty()) {
+                    return
                 }
 
                 doVibrate()
