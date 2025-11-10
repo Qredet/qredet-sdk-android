@@ -117,7 +117,7 @@ open class QHostApduService : HostApduService() {
         } else if (intent.hasExtra("ndefURI")) {
             Log.d("HCE ACTIVITY", "ndef uri dey")
             val payload = intent.getStringExtra("ndefURI").orEmpty()
-            updateNdefPayload(payload, forceUri = true)
+            updateNdefPayload(payload)
         }
 
         Log.i(TAG, "onStartCommand() | NDEF" + NDEF_URI.toString())
@@ -285,13 +285,10 @@ open class QHostApduService : HostApduService() {
         return NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, id, recordPayload)
     }
 
-    private fun updateNdefPayload(rawPayload: String, forceUri: Boolean = false) {
+    private fun updateNdefPayload(rawPayload: String) {
         val trimmed = rawPayload.trim()
-        NDEF_URI = if (trimmed.isNotEmpty() && (forceUri || trimmed.startsWith("http://", true) || trimmed.startsWith("https://", true))) {
-            NdefMessage(NdefRecord.createUri(trimmed))
-        } else {
-            NdefMessage(createTextRecord("en", trimmed.ifEmpty { "no nfc data" }, NDEF_ID))
-        }
+        val payload = trimmed.ifEmpty { "no nfc data" }
+        NDEF_URI = NdefMessage(createTextRecord("en", payload, NDEF_ID))
         NDEF_URI_BYTES = NDEF_URI.toByteArray()
         NDEF_URI_LEN = fillByteArrayToFixedDimension(
             BigInteger.valueOf(NDEF_URI_BYTES.size.toLong()).toByteArray(), 2

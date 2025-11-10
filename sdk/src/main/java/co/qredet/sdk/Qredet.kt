@@ -76,8 +76,21 @@ class Qredet(apiKey: String, onTransactionInitiated: (data: Map<String, *>) -> U
 
     @Subscribe
     fun onComplete(event: Events.NfcReadResult) {
-        val result = JSONObject(event.getResult())
-        this.onTransactionCompleted(result.toString())
+        val rawResult = event.getResult().trim()
+
+        val normalizedResult = when {
+            rawResult.isEmpty() -> rawResult
+            rawResult.startsWith("{") && rawResult.endsWith("}") -> {
+                try {
+                    JSONObject(rawResult).toString()
+                } catch (t: Throwable) {
+                    rawResult
+                }
+            }
+            else -> rawResult
+        }
+
+        this.onTransactionCompleted(normalizedResult)
     }
 
 

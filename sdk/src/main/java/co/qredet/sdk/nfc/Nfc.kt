@@ -234,17 +234,10 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
             return data.trim()
         }
 
-        val safeStart = requestedStart.coerceIn(0, data.length)
-
-        if (safeStart >= data.length) {
+        val safeStart = requestedStart.coerceAtLeast(0)
+        val remainder = data.drop(safeStart)
+        if (remainder.isEmpty()) {
             return ""
-        }
-
-        val remainder = try {
-            data.substring(safeStart)
-        } catch (e: StringIndexOutOfBoundsException) {
-            Log.e(TAG, "Failed to substring NFC payload starting at $safeStart for data: $data", e)
-            return data.trim()
         }
 
         val cleaned = remainder.dropWhile { it.isWhitespace() || it == ':' || it == '=' }
