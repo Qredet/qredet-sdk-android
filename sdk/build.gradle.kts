@@ -39,7 +39,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.ext:junit:1.1.6")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 
     implementation("com.squareup:otto:1.3.8")
@@ -62,7 +62,7 @@ configure<PublishingExtension> {
         create<MavenPublication>("Maven") {
             artifactId = "qredet-sdk-android"
             groupId = "com.github.Qredet"
-            version = "1.1.5"
+            version = "1.1.6"
             afterEvaluate {
                 artifact(tasks.getByName(
                     "bundleReleaseAar"

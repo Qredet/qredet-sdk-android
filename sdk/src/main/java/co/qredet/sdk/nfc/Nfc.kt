@@ -490,7 +490,15 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
             if (mNdefMessage != null) {
                 for (record in mNdefMessage.records) {
                     val payload = record.payload ?: continue
-                    val data = String(payload, Charsets.UTF_8)
+                    //val data = String(payload, Charsets.UTF_8)
+                    val data = when {
+                        record.tnf == NdefRecord.TNF_WELL_KNOWN &&
+                            Arrays.equals(record.type, NdefRecord.RTD_TEXT) -> {
+                            val textPayload = parseTextrecordPayload(payload)
+                            String(textPayload, Charsets.UTF_8)
+                        }
+                        else -> String(payload, Charsets.UTF_8)
+                    }
                     finalResult = extractMeaningfulPayload(data)
 
                 }
