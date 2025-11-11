@@ -31,7 +31,7 @@ Add the dependency to your app's `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Qredet:qredet-sdk-android:1.1.4'
+    implementation 'com.github.Qredet:qredet-sdk-android:1.1.5'
 }
 ```
 
@@ -58,7 +58,6 @@ qredet.startTransaction(
     context = this,
     id = "transaction-id",
     amount = 100.0,
-    reference = "REF-001",
     extra = mapOf("merchantName" to "Demo Merchant")
 )
 ```
@@ -75,7 +74,7 @@ Add these permissions to your `AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.NFC" />
-<!-- <uses-permission android:name="android.permission.INTERNET" /> - commented out for now -->
+<uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.VIBRATE" />
 
 <uses-feature android:name="android.hardware.nfc" android:required="false" />

@@ -417,13 +417,6 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
             command = hexStringToByteArray(sendReadBinaryNdefData)
             val responseSendBinaryNdefData: ByteArray = mIsoDep.transceive(command)
 
-            println(
-                "sendBinaryNdefData response: " + bytesToHex(
-                    responseSendBinaryNdefData
-                )
-            )
-            println("sendBinaryNdefData response: $responseSendBinaryNdefData")
-
             if (!isSucceed (responseSendBinaryNdefData)) {
                 println("responseSendBinaryNdefData is not 90 00 - aborted ")
                 return
@@ -437,14 +430,12 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
             println("ndefMessage: $ndefMessage")
 
-            // strip off the first 2 bytes
-            val ndefMessageStrip = Arrays.copyOfRange(ndefMessage, 9, ndefMessage.size)
+            // Try to get a NdefMessage from the byte array safely
+            if (ndefMessage.size <= 2) {
+                Log.w(TAG, "NDEF message too short, skipping parse")
+                return
+            }
 
-            //String ndefMessageParsed = Utils.parseTextrecordPayload(ndefMessageStrip);
-            val ndefMessageParsed = ndefMessageStrip
-            println("ndefMessage parsed: $ndefMessageParsed")
-
-            // try to get a NdefMessage from the byte array
             val ndefMessageByteArray = Arrays.copyOfRange(ndefMessage, 2, ndefMessage.size)
             try {
                 val ndefMessageFromTag = NdefMessage(ndefMessageByteArray)
