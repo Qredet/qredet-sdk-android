@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.view.WindowManager
 import co.qredet.sdk.EventBus
 import co.qredet.sdk.Events
 import co.qredet.sdk.nfc.parser.NdefMessageParser
@@ -49,6 +50,12 @@ class Nfc : Activity(), NfcAdapter.ReaderCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Allow touches to pass through to the Flutter UI underneath so the user can
+        // still tap Back
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        )
 
 //        EventBus.register(this)
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this)
